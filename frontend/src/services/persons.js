@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../utils/apiClient";
 const baseUrl = "/api/persons";
 
 const getAll = () => axios.get(baseUrl).then((response) => response.data);
