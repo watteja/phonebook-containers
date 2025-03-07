@@ -1,0 +1,30 @@
+services:
+  server:
+    image: phonebook-backend
+    container_name: phonebook-backend
+    environment:
+      - MONGODB_URI
+
+  client:
+    image: phonebook-frontend
+    container_name: phonebook-frontend
+    volumes:
+      - static_data:/usr/src/app/dist
+
+  nginx:
+    image: nginx:1.20.1
+    container_name: reverse-proxy
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_data:/usr/share/nginx/html
+    ports:
+      - 8080:80
+    depends_on:
+      - server
+      - client
+
+volumes:
+  static_data:
+#
+# run with: docker-compose up
+# shut down with: docker-compose down

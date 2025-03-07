@@ -1,39 +1,19 @@
-# syntax = docker/dockerfile:1
+FROM node:20
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=20.15.0
-FROM node:${NODE_VERSION}-slim as base
+WORKDIR /user/src/app
 
-LABEL fly_launch_runtime="Node.js"
+COPY --chown=node:node . .
 
-# Node.js app lives here
-WORKDIR /app
-
-# Set production environment
-ENV NODE_ENV="production"
-
-
-# Throw-away build stage to reduce size of final image
-FROM base as build
-
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
-
-# Install node modules
-COPY --link package-lock.json package.json ./
 RUN npm ci
 
-# Copy application code
-COPY --link . .
+ENV NODE_ENV=production
 
+USER node
 
-# Final stage for app image
-FROM base
+CMD ["npm", "start"]
 
-# Copy built application
-COPY --from=build /app /app
+# Build as 'phonebook-backend' to work with (production) docker-compose
+# docker build -t phonebook-backend .
 
-# Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
-CMD [ "npm", "run", "start" ]
+# To run only this container
+# docker run -it --rm -p 3001:3001 -e MONGODB_URI=url_from_env_file phonebook-backend

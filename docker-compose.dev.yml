@@ -13,10 +13,6 @@ services:
   client:
     image: phonebook-frontend-dev
     container_name: phonebook-frontend-dev
-    environment:
-      # when using Vite, all env variables must be prefixed with VITE_ to expose them
-      - VITE_BACKEND_URL=http://localhost:3001
-      # when not using NGINX: - VITE_BACKEND_URL=http://localhost:3001
     volumes:
       - ./frontend/:/usr/src/app
     # no need to expose port when using NGINX as a reverse proxy
